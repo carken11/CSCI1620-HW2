@@ -15,6 +15,10 @@ package triptypes;
  */
 public abstract class VacationPackage 
 {
+	private int numberOfDays;
+	private String packageName;
+	
+	
 	/**
 	 * Initializes a VacationPackage with provided values.
 	 * @param name The promotional marketing name for this package.
@@ -22,7 +26,8 @@ public abstract class VacationPackage
 	 */
 	public VacationPackage(String name, int numDays)
 	{
-		
+		setName(name);
+		setLength(numDays);
 	}
 	
 	/**
@@ -35,7 +40,14 @@ public abstract class VacationPackage
 	 */
 	public void setName(String name)
 	{
-		
+		if (name != null && !name.equals(""))
+		{
+			packageName = name;
+		}
+		else
+		{
+			packageName = "PACKAGE NAME TBD";
+		}
 	}
 	
 	/**
@@ -45,7 +57,14 @@ public abstract class VacationPackage
 	 */
 	public void setLength(int numDays)
 	{
-		
+		if (numDays > 0)
+		{
+			numberOfDays = numDays;
+		}
+		else
+		{
+			numberOfDays = 1;
+		}
 	}
 	
 	/**
@@ -54,7 +73,7 @@ public abstract class VacationPackage
 	 */
 	public String getName()
 	{
-		return "";
+		return packageName;
 	}
 	
 	/**
@@ -63,7 +82,7 @@ public abstract class VacationPackage
 	 */
 	public int getNumDays()
 	{
-		return 0;
+		return numberOfDays;
 	}
 	
 	/**
@@ -109,7 +128,9 @@ public abstract class VacationPackage
 	 */
 	public String toString()
 	{
-		return "";
+		String result;
+		result = String.format("$%8.2f %s", getPrice(), getName());
+		return result;
 	}
 	
 	/**
@@ -122,6 +143,13 @@ public abstract class VacationPackage
 	 */
 	public boolean equals(Object other)
 	{
-		return true;
+		if (packageName.equals(((VacationPackage) other).getName()))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
