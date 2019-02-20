@@ -1,17 +1,15 @@
-// COURSE: CSCI1620-001
+// COURSE: CSCI1620
 // TERM: Spring 2019
 //
-// NAME: Carter Kennell and Cameron Gilinsky
-// RESOURCES: Partner programming with Cameron Gilinsky, along with 
-//			the use of the provided JavaDoc.
-
+// NAME: Cameron Gilinsky and Carter Kennell
+// RESOURCES: Piazza discussion board posts by the students and instructors for this class.
 
 package triptypes;
 
 /**
  * This class represents a RoadTrip vacation that includes a rental care,
  * overnight lodging, and fuel cost estimation.
- * @author ckennell and cgilinsky
+ * @author ckgilinsky and ckennell
  *
  */
 public class RoadTrip extends VacationPackage
@@ -20,46 +18,80 @@ public class RoadTrip extends VacationPackage
 	 * Amount due after deposit is paid. Always 0.
 	 */
 	private static final double AMOUNT_DUE = 0.0;
+	
 	/**
 	 * The base rate of a hotel room.
 	 */
-	private static final double HOTEL_BASE = 32.50;
+	private static final double HOTEL_BASE = 35.20;
+	
+	/**
+	 * Default cost for fuel per gallon.
+	 */
+	private static final double FUEL_DEFAULT = 2.50;
+	
+	/**
+	 * Car cost for 1-2 passengers.
+	 */
+	private static final double TWO_OR_LESS = 36.75;
+	
+	/**
+	 * Car cost for 3-4 passengers.
+	 */
+	private static final double FOUR_OR_LESS = 50.13;
+	
+	/**
+	 * Car cost for 5-6 passengers.
+	 */
+	private static final double SIX_OR_LESS = 60.25;
+	
+	/**
+	 * Car cost for 7-8 passengers.
+	 */
+	private static final double EIGHT_OR_LESS = 70.50;
+	
+	/**
+	 * Car cost for 9+ passengers.
+	 */
+	private static final double MORE_THAN_NINE = 150.00;
+	
+	/**
+	 * MPG for 1-2 passengers.
+	 */
+	private static final int MPG_TWO_OR_LESS = 45;
+	
+	/**
+	 * MPG for 3-4 passengers.
+	 */
+	private static final int MPG_FOUR_OR_LESS = 32;
+	
+	/**
+	 * MPG for 5-6 passengers.
+	 */
+	private static final int MPG_SIX_OR_LESS = 28;
+	
+	/**
+	 * MPG for 7-8 passengers.
+	 */
+	private static final int MPG_EIGHT_OR_LESS = 22;
+	
+	/**
+	 * MPG for 9+ passengers.
+	 */
+	private static final int MPG_MORE_THAN_NINE = 15;
+	
 	/**
 	 * The cost of the rental car.
-	 */
-	private double rentalCost;
-	/**
-	 * The total deposit paid. Includes lodging and cost of car.
-	 */
-	private double depositAmount;
-	/**
-	 * The expected cost of fuel for the trip.
-	 */
-	private double fuelCost;
-	/**
-	 * The price of fuel per gallon USD.
 	 */
 	private double fuelPPG;
 	/**
 	 * The rating of the hotel from a scale 1..5.
 	 */
 	private int stars;
-	/**
-	 * The cost of lodging.
-	 */
-	private double lodgingCost;
+
 	/**
 	 * The number of people going on the road trip.
 	 */
-	private int numPersons;
-	/**
-	 * The number of stops on the trip.
-	 */
-	private int numStops;
-	/**
-	 * The total Price of the road trip.
-	 */
-	private double totalPrice;
+	private int numPersonsOut;
 	/**
 	 * An array of strings listing the stops along the road trip.
 	 */
@@ -77,7 +109,7 @@ public class RoadTrip extends VacationPackage
 	 * @param numDays The number of days required for this RoadTrip.
 	 * @param stops A list of destinations that will be visited along
 	 * the way on this RoadTrip.
-	 * @param fuelcost The estimated cost of fuel in US dollars per gallon
+	 * @param fuelCost The estimated cost of fuel in US dollars per gallon
 	 * based on current rates.
 	 * @param miles The total number of miles for this RoadTrip, assuming
 	 * people follow the intended route.
@@ -88,14 +120,23 @@ public class RoadTrip extends VacationPackage
 	 * will be adjusted to the closest valid value.
 	 */
 	public RoadTrip(String name, int numDays, String[] stops,
-					double fuelcost, int miles, int maxPersons, int hotelStars)
+					double fuelCost, int miles, int maxPersons, int hotelStars)
 	{
 		super(name, numDays);
-		setFuelPrice(fuelcost);
+		setFuelPrice(fuelCost);
 		setPersons(maxPersons);
 		distance = miles;
 		stars = hotelStars;
 		stopsArr = stops;		
+	}
+	
+	/**
+	 * Retrieves the current fuel price used for cost projections.
+	 * @return The fuel price in US dollars per gallon.
+	 */
+	public double getFuelPrice()
+	{
+		return fuelPPG;
 	}
 	
 	/**
@@ -115,8 +156,7 @@ public class RoadTrip extends VacationPackage
 	 */
 	public double getPrice()
 	{
-		totalPrice = getCarCost() + getLodgingCost() + getEstimatedFuelCost();
-		return totalPrice;
+		return getCarCost() + getLodgingCost() + getEstimatedFuelCost();
 	}
 	
 	/**
@@ -127,8 +167,7 @@ public class RoadTrip extends VacationPackage
 	 */
 	public double getDepositAmount()
 	{
-		depositAmount = getCarCost() + getLodgingCost();
-		return depositAmount;
+		return getCarCost() + getLodgingCost();
 	}
 	
 	/**
@@ -148,11 +187,24 @@ public class RoadTrip extends VacationPackage
 	 * hotel (in stars), the number of rooms needed for the party and a base
 	 * charge of $35.20 per room per night. Lodging costs assume a 
 	 * maximum 2 person occupancy per room.
+	 * For example, a 5 day road trip for 4 people in 2 star hotels is costed as:
+	 * $35.20 base x 2 star hotels x 4 nights x 2 rooms per night --> $563.20
 	 * @return The lodging subtotal in US dollars.
 	 */
 	public double getLodgingCost()
 	{
-		lodgingCost = HOTEL_BASE * stars * super.getNumDays() * (numPersons / 2);
+		int numberOfRooms;
+		double lodgingCost;
+		if (getNumPersons() % 2 == 0)
+		{
+			numberOfRooms = getNumPersons() / 2;
+		}
+		else
+		{
+			numberOfRooms = (getNumPersons() / 2) + 1;
+		}
+		
+		lodgingCost = HOTEL_BASE * getHotelStars() * (getNumDays() - 1) * numberOfRooms;
 		return lodgingCost;
 	}
 	
@@ -162,35 +214,41 @@ public class RoadTrip extends VacationPackage
 	 * on full days, with no partial day rentals allowed. Further, the travel
 	 * agency uses a standard daily rental car charge based on the 
 	 * number of occupants riding along.
+	 * $ 36.75   1-2 passengers
+	 * $ 50.13   3-4 passengers
+	 * $ 60.25   5-6 passengers
+	 * $ 70.50   7-8 passengers
+	 * $150.00    9+ passengers (since you'll need a bus)
 	 * @return The total rental car cost for this trip.
 	 */
 	public double getCarCost()
 	{
-		//double rentalCost;
-		if (numPersons < 9)
+		double carCost = 0.0;
+		
+
+		
+		if (numPersonsOut <= 2)
 		{
-			if (numPersons >= 7)
-			{
-				rentalCost = 70.50;
-			}
-			else if (numPersons >= 5)
-			{
-				rentalCost = 60.25;
-			}
-			else if (numPersons >= 3)
-			{
-				rentalCost = 50.13;
-			}
-			else
-			{
-				rentalCost = 36.25;
-			}
+			carCost = TWO_OR_LESS;
+		}
+		else if (numPersonsOut <= 4)
+		{
+			carCost = FOUR_OR_LESS;
+		}
+		else if (numPersonsOut <= 6)
+		{
+			carCost = SIX_OR_LESS;
+		}
+		else if (numPersonsOut <= 8)
+		{
+			carCost = EIGHT_OR_LESS;
 		}
 		else
 		{
-			rentalCost = 150.00;
+			carCost = MORE_THAN_NINE;
 		}
-		return rentalCost;
+		
+		return carCost * getNumDays();
 	}
 	
 	/**
@@ -199,7 +257,16 @@ public class RoadTrip extends VacationPackage
 	 */
 	public int getNumStops()
 	{
-		return stopsArr.length;
+		int count = 0;
+		
+		for (int i = 0; i < stopsArr.length; i++)
+		{
+			if (stopsArr[i] != null)
+			{
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	/**
@@ -209,7 +276,7 @@ public class RoadTrip extends VacationPackage
 	 */
 	public void setPersons(int maxPeople)
 	{
-		numPersons = maxPeople;
+		numPersonsOut = maxPeople;
 	}
 	
 	/**
@@ -219,7 +286,7 @@ public class RoadTrip extends VacationPackage
 	 */
 	public int getNumPersons()
 	{
-		return numPersons;
+		return numPersonsOut;
 	}
 	
 	/**
@@ -231,13 +298,13 @@ public class RoadTrip extends VacationPackage
 	 */
 	public void setFuelPrice(double pricePerGallon)
 	{
-		if (!(pricePerGallon < 0))
+		if (pricePerGallon > 0)
 		{
 			fuelPPG = pricePerGallon;
 		}
 		else
 		{
-			fuelPPG = 2.50;
+			fuelPPG = FUEL_DEFAULT;
 		}
 	}
 	
@@ -247,37 +314,38 @@ public class RoadTrip extends VacationPackage
 	 * of the rental car, and the cost of fuel. Standard rental cars
 	 * used have decreasing fuel efficiency as the size gets bigger
 	 * Thus, efficiency is a function of passenger count.
+	 * 45mpg   1-2 passengers
+	 * 32mpg   3-4 passengers
+	 * 28mpg   5-6 passengers
+	 * 22mpg   7-8 passengers
+	 * 15mpg    9+ passengers (buses aren't very efficient)
 	 * @return The projected fuel cost in US dollars.
 	 */
 	public double getEstimatedFuelCost()
 	{
-		int mpg;
-		if (numPersons < 9)
+		double mpg;
+		if (numPersonsOut <= 2)
 		{
-			if (numPersons >= 7)
-			{
-				mpg = 22;
-			}
-			else if (numPersons >= 5)
-			{
-				mpg = 28;
-			}
-			else if (numPersons >= 3)
-			{
-				mpg = 32;
-			}
-			else
-			{
-				mpg = 45;
-			}
+			mpg = MPG_TWO_OR_LESS;
+		}
+		else if (numPersonsOut <= 4)
+		{
+			mpg = MPG_FOUR_OR_LESS;
+		}
+		else if (numPersonsOut <= 6)
+		{
+			mpg = MPG_SIX_OR_LESS;
+		}
+		else if (numPersonsOut <= 8)
+		{
+			mpg = MPG_EIGHT_OR_LESS;
 		}
 		else
 		{
-			mpg = 15;
+			mpg = MPG_MORE_THAN_NINE;
 		}
 		
-		fuelCost = (distance / mpg) * fuelPPG;
-		return fuelCost;
+		return (distance / mpg) * fuelPPG;
 	}
 	
 	/**
@@ -315,10 +383,15 @@ public class RoadTrip extends VacationPackage
 	 */
 	public String toString()
 	{
+		/*
 		String result = "";
-		result += String.format("$9.2%f %s\n");
+		result += String.format("$%8.2f  %s\n", getPrice(), getName());
 		result += String.format("           ");
 		result += getStops();
+		*/
+		
+		String result = "";
+		result = String.format("%s\n        %s%s", super.toString(), "A road trip with stops at ", getStops());
 		
 		return result;
 	}

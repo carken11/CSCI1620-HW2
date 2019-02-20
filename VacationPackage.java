@@ -1,23 +1,27 @@
-// COURSE: CSCI1620-001
+// COURSE: CSCI1620
 // TERM: Spring 2019
 //
-// NAME: Carter Kennell and Cameron Gilinsky
-// RESOURCES: Partner programming with Cameron Gilinsky, along with 
-//			the use of the provided JavaDoc.
+// NAME: Cameron Gilinsky and Carter Kennell
+// RESOURCES: Piazza discussion board posts by the students and instructors for this class.
 
 package triptypes;
 
 /**
  * This class serves as the base class of all types of VacationPackages
  * within the travel agency program.
- * @author ckennell, cgilinsky
- *
+ * @author ckgilinsky and ckennell
  */
 public abstract class VacationPackage 
 {
+	/**
+	 * Number of days of the VacationPackage.
+	 */
 	private int numberOfDays;
-	private String packageName;
 	
+	/**
+	 * Name of the VacationPackage.
+	 */
+	private String packageName;
 	
 	/**
 	 * Initializes a VacationPackage with provided values.
@@ -108,7 +112,7 @@ public abstract class VacationPackage
 	 */
 	public double getAmountDue()
 	{
-		return 0.0;
+		return getPrice() - getDepositAmount();
 	}
 	
 	/**
@@ -129,7 +133,7 @@ public abstract class VacationPackage
 	public String toString()
 	{
 		String result;
-		result = String.format("$%8.2f %s", getPrice(), getName());
+		result = String.format("$%9.2f  %s", getPrice(), getName());
 		return result;
 	}
 	
@@ -142,14 +146,13 @@ public abstract class VacationPackage
 	 * @param other A reference to another object to be compared with this one.
 	 */
 	public boolean equals(Object other)
-	{
-		if (packageName.equals(((VacationPackage) other).getName()))
+	{	
+		boolean equal = false;
+		
+		if (!other.equals(null))
 		{
-			return true;
+			equal = packageName.equals(((VacationPackage) other).getName());
 		}
-		else
-		{
-			return false;
-		}
+		return equal;
 	}
 }
