@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import travelgui.VacationPackageCollection;
 import triptypes.AllInclusiveResort;
+import triptypes.Cruise;
 import triptypes.Flight;
 import triptypes.FlightOptionalPackage;
 import triptypes.RoadTrip;
@@ -145,4 +146,93 @@ public class VacationPackageCollectionTest {
 		assertTrue(flightdeets.equals("ERROR: Index is out of range!"));
 		
 	}
+	
+	@Test
+	public void testGetFlightDetails()
+	{
+		VacationPackageCollection a = new VacationPackageCollection();
+		String[] stops = new String[1];
+		VacationPackage b = new RoadTrip("Road Trip", 1, stops, 1.00, 10, 1, 5);
+		
+		a.addVacation(b);
+		String flightdeets = a.getFlightDetails(13);
+		
+		assertTrue(flightdeets.equals("ERROR: Index is out of range!"));
+		
+	}
+	
+	@Test
+	public void testFilterVacationsForRoadTrip()
+	{
+		VacationPackageCollection a = new VacationPackageCollection();
+		String[] stops = new String[1];
+		VacationPackage b = new RoadTrip("Road Trip", 1, stops, 1.00, 10, 1, 5);
+		
+		a.addVacation(b);
+		
+		//Call the method to test
+		VacationPackageCollection temp = a.filterVacationsFor(1);
+		
+		//Check the return
+		assertTrue(temp.getItemAt(0) instanceof triptypes.RoadTrip);
+			
+	}
+	
+	@Test
+	public void testFilterVacationsForCruise()
+	{
+		VacationPackageCollection a = new VacationPackageCollection();
+		//String[] stops = new String[1];
+		Calendar leave = Calendar.getInstance();
+		Calendar ret = Calendar.getInstance();
+		VacationPackage b = new Cruise("Road Trip", 1, "Bob", "Omaha", leave, ret, 5.0);
+		
+		a.addVacation(b);
+		
+		//Call the method to test
+		VacationPackageCollection temp = a.filterVacationsFor(2);
+		
+		//Check the return
+		assertTrue(temp.getItemAt(0) instanceof triptypes.Cruise);
+			
+	}
+	
+	@Test
+	public void testFilterVacationsForAllInclusiveResort()
+	{
+		VacationPackageCollection a = new VacationPackageCollection();
+		String[] stops = new String[1];
+		//Calendar leave = Calendar.getInstance();
+		//Calendar ret = Calendar.getInstance();
+		VacationPackage b = new AllInclusiveResort("Road Trip", 1, "Bob", 2, 5.0, stops);
+		
+		a.addVacation(b);
+		
+		//Call the method to test
+		VacationPackageCollection temp = a.filterVacationsFor(3);
+		
+		//Check the return
+		assertTrue(temp.getItemAt(0) instanceof triptypes.AllInclusiveResort);
+			
+	}
+	
+	@Test
+	public void testFilterVacationsForCruiseInvalidFilterNum()
+	{
+		VacationPackageCollection a = new VacationPackageCollection();
+		//String[] stops = new String[1];
+		Calendar leave = Calendar.getInstance();
+		Calendar ret = Calendar.getInstance();
+		VacationPackage b = new Cruise("Road Trip", 1, "Bob", "Omaha", leave, ret, 5.0);
+		
+		a.addVacation(b);
+		
+		//Call the method to test
+		VacationPackageCollection temp = a.filterVacationsFor(4);
+		
+		//Check the return
+		assertFalse(temp.getItemAt(0) instanceof triptypes.Cruise);
+			
+	}
+	
 }
